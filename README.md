@@ -2,42 +2,42 @@
 
 Мультиагентная QA-система на базе [OpenCode](https://opencode.ai/docs/). Она берёт требования из **Confluence**, анализирует их, создаёт задачи в **Jira** и тестовую модель в **TestIt**. На каждом этапе проверяется Quality Gate и сохраняется сквозная трассировка «требование → задача → тест-кейс».
 
-\---
+---
 
 ## Как это работает
 
 ```mermaid
 flowchart LR
-    U(\\\[Пользователь]) <--> O\\\[QA Orchestrator Agent]
-    O -->|1| R\\\[Requirement Reviewer Agent<br/>skill: requirement-review]
-    O -->|2| T\\\[Task Designer Agent<br/>skill: task-design]
-    O -->|3| D\\\[Test Designer Agent<br/>skill: test-design]
-    R -. читает .-> C\\\[(Confluence)]
-    T -. создаёт задачи .-> J\\\[(Jira)]
-    D -. создаёт тест-кейсы .-> Q\\\[(TestIt)]
-    R --> A1\\\[/artifacts/requirement-review/]
-    T --> A2\\\[/artifacts/task-design/]
-    D --> A3\\\[/artifacts/test-design/]
-    O --> A4\\\[/artifacts/final-report/]
+    U([Пользователь]) <--> O[QA Orchestrator Agent]
+    O -->|1| R[Requirement Reviewer Agent<br/>skill: requirement-review]
+    O -->|2| T[Task Designer Agent<br/>skill: task-design]
+    O -->|3| D[Test Designer Agent<br/>skill: test-design]
+    R -. читает .-> C[(Confluence)]
+    T -. создаёт задачи .-> J[(Jira)]
+    D -. создаёт тест-кейсы .-> Q[(TestIt)]
+    R --> A1[/artifacts/requirement-review/]
+    T --> A2[/artifacts/task-design/]
+    D --> A3[/artifacts/test-design/]
+    O --> A4[/artifacts/final-report/]
 ```
 
-|Агент|Файл|Skill|Что делает|
+| Агент | Файл | Skill | Что делает |
 |-|-|-|-|
-|QA Orchestrator Agent|`.opencode/agents/qa-orchestrator-agent.md`|—|Ведёт Workflow, раздаёт этапы субагентам, проверяет Quality Gate, собирает итоговый отчёт. Только он общается с пользователем|
-|Requirement Reviewer Agent|`.opencode/agents/requirement-review-agent.md`|`requirement-review`|Читает требования в Confluence, присваивает им ID, находит неоднозначности и противоречия|
-|Task Designer Agent|`.opencode/agents/task-design-agent.md`|`task-design`|Создаёт в Jira задачи со ссылками на ID требований и не допускает дубликатов|
-|Test Designer Agent|`.opencode/agents/test-design-agent.md`|`test-design`|Создаёт тест-кейсы в TestIt со ссылками на требования и задачи Jira|
+| QA Orchestrator Agent | `.opencode/agents/qa-orchestrator-agent.md` | — | Ведёт Workflow, раздаёт этапы субагентам, проверяет Quality Gate, собирает итоговый отчёт. Только он общается с пользователем |
+| Requirement Reviewer Agent | `.opencode/agents/requirement-review-agent.md` | `requirement-review` | Читает требования в Confluence, присваивает им ID, находит неоднозначности и противоречия |
+| Task Designer Agent | `.opencode/agents/task-design-agent.md` | `task-design` | Создаёт в Jira задачи со ссылками на ID требований и не допускает дубликатов |
+| Test Designer Agent | `.opencode/agents/test-design-agent.md` | `test-design` | Создаёт тест-кейсы в TestIt со ссылками на требования и задачи Jira |
 
 Этапы выполняются **строго по очереди**: review → task-design → test-design. Следующий этап запускается, только если у предыдущего статус Quality Gate равен `passed`. Если статус `blocked` (противоречия, нет данных, недоступен внешний сервис), оркестратор останавливается и передаёт вопрос пользователю.
 
 Общие правила для всех агентов (Context Management, ограничения, хранение Artifacts, эскалация, формат ответа) лежат в [`AGENTS.md`](./AGENTS.md).
 
-\---
+---
 
 ## Структура репозитория
 
 ```
-QA\\\_Agent/
+QA_Agent/
 ├── AGENTS.md                        # общие правила для всех агентов
 ├── .opencode/
 │   ├── agents/                      # описания агентов (имя файла = имя агента)
@@ -58,21 +58,21 @@ QA\\\_Agent/
     └── final-report/1.md
 ```
 
-\---
+---
 
 ## Требования
 
-* **OpenCode** ([установка](https://opencode.ai/docs/));
-* **Node.js 20+** (нужен для custom tool `confluence`);
-* API-ключ LLM-провайдера, подключённый в OpenCode;
-* **Atlassian Cloud** (Confluence и Jira) и API-токен Atlassian;
-* **TestIt** на платном тарифе с доступом к [Test IT MCP](https://docs.testit.software/user-guide/mcp/mcp-setup.html) и API-токен TestIt ([работа с API](https://docs.testit.software/user-guide/work-with-api.html)).
+- **OpenCode** ([установка](https://opencode.ai/docs/));
+- **Node.js 20+** (нужен для custom tool `confluence`);
+- API-ключ LLM-провайдера, подключённый в OpenCode;
+- **Atlassian Cloud** (Confluence и Jira) и API-токен Atlassian;
+- **TestIt** на платном тарифе с доступом к [Test IT MCP](https://docs.testit.software/user-guide/mcp/mcp-setup.html) и API-токен TestIt ([работа с API](https://docs.testit.software/user-guide/work-with-api.html)).
 
-\---
+---
 
 ## Установка и настройка
 
-### 1\. Установить OpenCode
+### 1. Установить OpenCode
 
 ```bash
 # macOS / Linux
@@ -84,61 +84,61 @@ npm install -g opencode-ai
 
 На Windows лучше работать через WSL.
 
-### 2\. Клонировать репозиторий
+### 2. Клонировать репозиторий
 
 ```bash
-git clone https://github.com/zhenia987/QA\\\_Agent.git
-cd QA\\\_Agent
+git clone https://github.com/zhenia987/QA_Agent.git
+cd QA_Agent
 ```
 
-### 3\. Подключить LLM-провайдера
+### 3. Подключить LLM-провайдера
 
 Запустите `opencode` в каталоге проекта, выполните команду `/connect` и выберите провайдера. Потом введите API-ключ.
 
-> \\\*\\\*Не запускайте `/init`.\\\*\\\* Эта команда сгенерирует новый `AGENTS.md` и перезапишет общие правила агентов.
+> **Не запускайте `/init`.** Эта команда сгенерирует новый `AGENTS.md` и перезапишет общие правила агентов.
 
-### 4\. Задать переменные окружения
+### 4. Задать переменные окружения
 
 Custom tool `confluence` читает учётные данные из переменных окружения:
 
-|Переменная|Пример|Назначение|
+| Переменная | Пример | Назначение |
 |-|-|-|
-|`CONFLUENCE\\\_URL`|`https://your-site.atlassian.net`|Адрес сайта Atlassian **без** `/wiki` и без `/` на конце|
-|`CONFLUENCE\\\_EMAIL`|`user@company.com`|Email аккаунта Atlassian|
-|`CONFLUENCE\\\_API\\\_TOKEN`|`ATATT3x...`|[API-токен Atlassian](https://id.atlassian.com/manage-profile/security/api-tokens)|
-|`TESTIT\\\_URL`|`https://your-company.testit.software`|Адрес TestIt без `/` на конце (для Test IT MCP)|
-|`TESTIT\\\_API\\\_TOKEN`|`NxNBZ3A5...`|API-токен TestIt (профиль пользователя → API-токены)|
+| `CONFLUENCE_URL` | `https://your-site.atlassian.net` | Адрес сайта Atlassian **без** `/wiki` и без `/` на конце |
+| `CONFLUENCE_EMAIL` | `user@company.com` | Email аккаунта Atlassian |
+| `CONFLUENCE_API_TOKEN` | `ATATT3x...` | [API-токен Atlassian](https://id.atlassian.com/manage-profile/security/api-tokens) |
+| `TESTIT_URL` | `https://your-company.testit.software` | Адрес TestIt без `/` на конце (для Test IT MCP) |
+| `TESTIT_API_TOKEN` | `NxNBZ3A5...` | API-токен TestIt (профиль пользователя → API-токены) |
 
 Linux / macOS:
 
 ```bash
-export CONFLUENCE\\\_URL="https://your-site.atlassian.net"
-export CONFLUENCE\\\_EMAIL="user@company.com"
-export CONFLUENCE\\\_API\\\_TOKEN="your\\\_atlassian\\\_token"
-export TESTIT\\\_URL="https://your-company.testit.software"
-export TESTIT\\\_API\\\_TOKEN="your\\\_testit\\\_token"
+export CONFLUENCE_URL="https://your-site.atlassian.net"
+export CONFLUENCE_EMAIL="user@company.com"
+export CONFLUENCE_API_TOKEN="your_atlassian_token"
+export TESTIT_URL="https://your-company.testit.software"
+export TESTIT_API_TOKEN="your_testit_token"
 ```
 
 Windows (PowerShell):
 
 ```powershell
-$env:CONFLUENCE\\\_URL="https://your-site.atlassian.net"
-$env:CONFLUENCE\\\_EMAIL="user@company.com"
-$env:CONFLUENCE\\\_API\\\_TOKEN="your\\\_atlassian\\\_token"
-$env:TESTIT\\\_URL="https://your-company.testit.software"
-$env:TESTIT\\\_API\\\_TOKEN="your\\\_testit\\\_token"
+$env:CONFLUENCE_URL="https://your-site.atlassian.net"
+$env:CONFLUENCE_EMAIL="user@company.com"
+$env:CONFLUENCE_API_TOKEN="your_atlassian_token"
+$env:TESTIT_URL="https://your-company.testit.software"
+$env:TESTIT_API_TOKEN="your_testit_token"
 ```
 
 > Не коммитьте токены в репозиторий. Если используете файл `.env`, добавьте его в `.gitignore`.
 
-Проверить доступ к Confluence можно так (`<PAGE\\\_ID>` — ID страницы с требованиями):
+Проверить доступ к Confluence можно так (`<PAGE_ID>` — ID страницы с требованиями):
 
 ```bash
-curl -u "$CONFLUENCE\\\_EMAIL:$CONFLUENCE\\\_API\\\_TOKEN" \\\\
-  "$CONFLUENCE\\\_URL/wiki/api/v2/pages/<PAGE\\\_ID>?body-format=storage"
+curl -u "$CONFLUENCE_EMAIL:$CONFLUENCE_API_TOKEN" \
+  "$CONFLUENCE_URL/wiki/api/v2/pages/<PAGE_ID>?body-format=storage"
 ```
 
-### 5\. Подключить Jira и TestIt через MCP
+### 5. Подключить Jira и TestIt через MCP
 
 Для Jira и TestIt в репозитории нет своих инструментов. Агенты работают с ними через MCP-серверы, и их нужно один раз описать в конфиге OpenCode. Создайте в корне проекта файл `opencode.json`:
 
@@ -153,40 +153,40 @@ curl -u "$CONFLUENCE\\\_EMAIL:$CONFLUENCE\\\_API\\\_TOKEN" \\\\
     },
     "testit": {
       "type": "remote",
-      "url": "{env:TESTIT\\\_URL}/mcp",
+      "url": "{env:TESTIT_URL}/mcp",
       "enabled": true,
       "oauth": false,
       "headers": {
-        "X-baseurl": "{env:TESTIT\\\_URL}",
-        "X-token": "{env:TESTIT\\\_API\\\_TOKEN}"
+        "X-baseurl": "{env:TESTIT_URL}",
+        "X-token": "{env:TESTIT_API_TOKEN}"
       }
     }
   }
 }
 ```
 
-* **Jira** подключается через официальный [Atlassian Rovo MCP Server](https://github.com/atlassian/atlassian-mcp-server). Авторизация идёт через OAuth: выполните `opencode mcp auth atlassian` и войдите в браузере.
-* **TestIt** подключается через официальный [Test IT MCP](https://docs.testit.software/user-guide/mcp/mcp-setup.html). Это удалённый сервер по адресу `<адрес TestIt>/mcp`. Адрес TestIt передаётся в заголовке `X-baseurl`, API-токен в заголовке `X-token`. Test IT MCP доступен только на платных тарифах.
+- **Jira** подключается через официальный [Atlassian Rovo MCP Server](https://github.com/atlassian/atlassian-mcp-server). Авторизация идёт через OAuth: выполните `opencode mcp auth atlassian` и войдите в браузере.
+- **TestIt** подключается через официальный [Test IT MCP](https://docs.testit.software/user-guide/mcp/mcp-setup.html). Это удалённый сервер по адресу `<адрес TestIt>/mcp`. Адрес TestIt передаётся в заголовке `X-baseurl`, API-токен в заголовке `X-token`. Test IT MCP доступен только на платных тарифах.
 
 > Для отладки лучше завести отдельный проект TestIt и отдельный токен с ограниченными правами: часть команд Test IT MCP изменяет данные (создаёт, архивирует кейсы, меняет статусы).
 
-Если вы уже настроили эти MCP-серверы глобально в `\\\~/.config/opencode/opencode.json`, этот шаг можно пропустить.
+Если вы уже настроили эти MCP-серверы глобально в `~/.config/opencode/opencode.json`, этот шаг можно пропустить.
 
-### 6\. Проверить, что всё загрузилось
+### 6. Проверить, что всё загрузилось
 
 ```bash
 opencode agent list   # должны быть видны 4 агента из .opencode/agents
 opencode mcp list     # atlassian и testit в статусе connected
 ```
 
-\---
+---
 
 ## Запуск
 
 ### Интерактивный режим
 
 ```bash
-cd QA\\\_Agent
+cd QA_Agent
 opencode
 ```
 
@@ -213,63 +213,60 @@ opencode
 ### Неинтерактивный режим
 
 ```bash
-opencode run --agent qa-orchestrator-agent \\\\
+opencode run --agent qa-orchestrator-agent \
   "Проанализируй требования из Confluence (pageId: 3997697), создай задачи в Jira в проекте SCRUM и тестовую модель в TestIt в проекте QAI06."
 ```
 
 В этом режиме оркестратор не сможет задать уточняющие вопросы. Если в требованиях найдутся противоречия, Workflow закончится со статусом `blocked`.
 
-\---
+---
 
 ## Входные данные
 
-|Параметр|Обязательный|Пример|
+| Параметр | Обязательный | Пример |
 |-|-|-|
-|Страница(ы) требований в Confluence (`pageId`)|да|`3997697`|
-|Проект Jira (ключ)|да|`SCRUM`|
-|Проект TestIt|да|`QAI06`|
-|Дополнительные бизнес-правила, ограничения, критерии приёмки|нет|текстом в промте|
+| Страница(ы) требований в Confluence (`pageId`) | да | `3997697` |
+| Проект Jira (ключ) | да | `SCRUM` |
+| Проект TestIt | да | `QAI06` |
+| Дополнительные бизнес-правила, ограничения, критерии приёмки | нет | текстом в промте |
 
 `pageId` берётся из URL страницы Confluence: `https://your-site.atlassian.net/wiki/spaces/XXX/pages/<pageId>/...`.
 
-\---
+---
 
 ## Результаты
 
 Каждый этап сохраняет свой Artifact в `artifacts/<этап>/<версия>.md`. Старые версии остаются, новая версия получает следующий номер.
 
-|Artifact|Путь|Содержимое|
+| Artifact | Путь | Содержимое |
 |-|-|-|
-|Requirement Review|`artifacts/requirement-review/<v>.md`|Требования с ID (FR, BR, CON, COND, AC), источники, проблемы, открытые вопросы|
-|Task Design|`artifacts/task-design/<v>.md`|Задачи Jira, матрица «требование → задача», непокрытые требования|
-|Test Model|`artifacts/test-design/<v>.md`|Тест-кейсы TestIt, матрица «требование → задача → тест-кейс»|
-|Final Report|`artifacts/final-report/<v>.md`|Статусы этапов, созданные объекты, трассировка, открытые вопросы|
+| Requirement Review | `artifacts/requirement-review/<v>.md` | Требования с ID (FR, BR, CON, COND, AC), источники, проблемы, открытые вопросы |
+| Task Design | `artifacts/task-design/<v>.md` | Задачи Jira, матрица «требование → задача», непокрытые требования |
+| Test Model | `artifacts/test-design/<v>.md` | Тест-кейсы TestIt, матрица «требование → задача → тест-кейс» |
+| Final Report | `artifacts/final-report/<v>.md` | Статусы этапов, созданные объекты, трассировка, открытые вопросы |
 
 В каждом Artifact указаны версии входных Artifacts и статус Quality Gate: `passed`, `failed` или `blocked`.
 
 В каталоге `artifacts/` лежит пример полного прогона по требованиям демо-приложения «GameDay» (Confluence page `3997697`, проект Jira `SCRUM`, проект TestIt `QAI06`).
 
-\---
+---
 
 ## Решение проблем
 
-|Симптом|Причина и решение|
+| Симптом | Причина и решение |
 |-|-|
-|`Не заданы переменные окружения Confluence`|Не заданы `CONFLUENCE\\\_URL`, `CONFLUENCE\\\_EMAIL` или `CONFLUENCE\\\_API\\\_TOKEN` в той сессии терминала, из которой запущен `opencode`|
-|`Confluence API error: 401`|Неверный email или токен Atlassian|
-|`Confluence API error: 404`|Неверный `pageId`, нет доступа к странице, или `CONFLUENCE\\\_URL` указан с `/wiki` на конце|
-|Агенты не видны в `opencode agent list`|`opencode` запущен не из корня репозитория|
-|Ошибка импорта `@opencode-ai/plugin` в `confluence.ts`|Выполните `npm install @opencode-ai/plugin` в каталоге `.opencode`|
-|Jira недоступна|Проверьте `opencode mcp list` и повторите `opencode mcp auth atlassian`|
-|TestIt недоступен|Проверьте `opencode mcp list`, значения `TESTIT\\\_URL` (без `/` на конце) и `TESTIT\\\_API\\\_TOKEN`, а также что Test IT MCP включён в вашем тарифе|
-|Этап завершился со статусом `blocked`|Это ожидаемое поведение. Причина записана в Artifact этапа и в ответе оркестратора. Ответьте на вопросы и попросите оркестратора продолжить|
+| `Не заданы переменные окружения Confluence` | Не заданы `CONFLUENCE_URL`, `CONFLUENCE_EMAIL` или `CONFLUENCE_API_TOKEN` в той сессии терминала, из которой запущен `opencode` |
+| `Confluence API error: 401` | Неверный email или токен Atlassian |
+| `Confluence API error: 404` | Неверный `pageId`, нет доступа к странице, или `CONFLUENCE_URL` указан с `/wiki` на конце |
+| Агенты не видны в `opencode agent list` | `opencode` запущен не из корня репозитория |
+| Ошибка импорта `@opencode-ai/plugin` в `confluence.ts` | Выполните `npm install @opencode-ai/plugin` в каталоге `.opencode` |
+| Jira недоступна | Проверьте `opencode mcp list` и повторите `opencode mcp auth atlassian` |
+| TestIt недоступен | Проверьте `opencode mcp list`, значения `TESTIT_URL` (без `/` на конце) и `TESTIT_API_TOKEN`, а также что Test IT MCP включён в вашем тарифе |
+| Этап завершился со статусом `blocked` | Это ожидаемое поведение. Причина записана в Artifact этапа и в ответе оркестратора. Ответьте на вопросы и попросите оркестратора продолжить |
 
-\---
+---
 
 ## Ограничения
 
-* Агенты **не удаляют и не изменяют** существующие задачи Jira и тест-кейсы TestIt, а Confluence только читают.
-* Ограничения доступа к инструментам сейчас описаны текстом в инструкциях агентов. Чтобы закрепить их технически, добавьте в frontmatter агентов блок `permission` ([документация](https://opencode.ai/docs/agents/)).
-
-
-
+- Агенты **не удаляют и не изменяют** существующие задачи Jira и тест-кейсы TestIt, а Confluence только читают.
+- Ограничения доступа к инструментам сейчас описаны текстом в инструкциях агентов. Чтобы закрепить их технически, добавьте в frontmatter агентов блок `permission` ([документация](https://opencode.ai/docs/agents/)).
